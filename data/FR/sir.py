@@ -16,7 +16,6 @@ class SIRModel():
 
 
     def fit(self, X, y, N):
-        # fit sur données synthetique sans bruit 
         infected = y
         newN = N
 
@@ -43,11 +42,9 @@ class SIRModel():
         return self
 
 
-    def predict(self, t):
-        # Total population, N.
-        N = 10000
+    def predict(self, t, N, I0):
         # Initial number of infected and recovered individuals, I0 and R0.
-        I0, R0 = 1, 0
+        I0, R0 = I0, 0
         # Everyone else, S0, is susceptible to infection initially.
         S0 = N - I0 - R0
         # Contact rate, beta, and mean recovery rate, gamma, (in 1/days).
