@@ -7,21 +7,24 @@ class SIRModel():
         
         self.beta_0 = beta_init
         self.gamma_0 = gamma_init
+        
         self.beta = None
         self.gamma_ = None
 
         # S = suspects
         self.S0 = N - I0 - R0
-        # I 
+        # I = Infected 
         self.I0 = I0
-        # R 
+        # R = Recovered
         self.R0 = R0 
         
-        # N
+        # N = Population
         self.N = N
 
         
-
+    """
+    
+    """
     def deriv(self, SIR, t, N, beta, gamma):
         S, I, R = SIR
         dSdt = -beta * S * I / N
@@ -41,20 +44,18 @@ class SIRModel():
             return odeint(self.deriv, y0, x, args=(betas, gammas))[:,1]
 
         popt, pcov = optimize.curve_fit(fit_odeint, X, y)
-        #fitted = fit_odeint(X, *popt)
+    
         self.beta = popt[0]
         self.gamma_ = popt[1]
         return self
 
+    """
 
+    """
     def predict(self, t):
-        
         # Initial conditions vector
         y0 = self.S0, self.I0, self.R0
-        
         # Integrate the SIR equations over the time grid, t.
         ret = odeint(self.deriv, y0, t, args=(self.N, self.beta, self.gamma_))
-        
         S, I, R = ret.T
-        
         return S, I, R
