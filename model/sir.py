@@ -3,13 +3,13 @@ from scipy import optimize, integrate
 
 
 class SIRModel():
-    def init(self, beta_init=0.1, gamma_init=0.3, R0=0,I0=1,N=10000):
+    def __init__(self, beta_init=0.1, gamma_init=0.3, R0=0,I0=1,N=10000):
         
         self.beta_0 = beta_init
         self.gamma_0 = gamma_init
         
         self.beta = None
-        self.gamma_ = None
+        self.gamma = None
 
         # S = suspects
         self.S0 = N - I0 - R0
@@ -28,8 +28,8 @@ class SIRModel():
     def deriv(self, SIR, t, N, beta, gamma):
         S, I, R = SIR
         dSdt = -beta * S * I / N
-        dIdt = beta * S * I / N - gamma * I
         dRdt = gamma * I
+        dIdt = - (dSdt + dRdt)
         return dSdt, dIdt, dRdt
 
     """
@@ -41,12 +41,12 @@ class SIRModel():
         # Everyone else, S0, is susceptible to infection initially.
 
         def fit_odeint(x, betas, gammas):
-            return odeint(self.deriv, y0, x, args=(betas, gammas))[:,1]
+            return odeint(self.deriv, y0, x, args=(self.N,betas, gammas))[:,1]
 
         popt, pcov = optimize.curve_fit(fit_odeint, X, y)
     
         self.beta = popt[0]
-        self.gamma_ = popt[1]
+        self.gamma = popt[1]
         return self
 
     """
@@ -56,6 +56,6 @@ class SIRModel():
         # Initial conditions vector
         y0 = self.S0, self.I0, self.R0
         # Integrate the SIR equations over the time grid, t.
-        ret = odeint(self.deriv, y0, t, args=(self.N, self.beta, self.gamma_))
+        ret = odeint(self.deriv, y0, t, args=(self.N, self.beta, self.gamma))
         S, I, R = ret.T
         return S, I, R
