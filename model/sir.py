@@ -5,11 +5,8 @@ from scipy import optimize, integrate
 class SIRModel():
     def __init__(self, beta_init=0.1, gamma_init=0.3, R0=0,I0=1,N=10000):
         
-        self.beta_0 = beta_init
-        self.gamma_0 = gamma_init
-        
-        self.beta = None
-        self.gamma = None
+        self.beta = beta_init
+        self.gamma = gamma_init
 
         # S = suspects
         self.S0 = N - I0 - R0
